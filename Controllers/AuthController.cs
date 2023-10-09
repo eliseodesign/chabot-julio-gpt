@@ -81,6 +81,21 @@ public class AuthController : ControllerBase
     }
   }
 
+  [HttpGet]
+  [Route("verify")]
+  public async Task<IActionResult> Confirm(string token, int userId)
+  {
+    bool result = await _userService.ConfirmAccount(token, userId);
+    if (result == true)
+    {
+      return Ok(Res.Provider("Cuenta confirmada", "Ya puede aplicar a ofertas", true));
+    }
+    else
+    {
+      return BadRequest(Res.Provider("Error al confirmar cuenta", "Error", false));
+    }
+  }
+
 
   private string GetFileContent(string filePath)
   {
