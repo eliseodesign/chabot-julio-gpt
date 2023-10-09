@@ -23,10 +23,12 @@ public class AuthController : ControllerBase
 
   [HttpPost]
   [Route("register")]
-  public async Task<IActionResult> Reg([FromBody] ClientUserSchema.Create usuario)
+  public async Task<IActionResult> Reg([FromBody] CreateClientUser usuario)
   {
     if (await _userService.GetByEmail(usuario.Email) == null)
     {
+      string typeUser = UtilsService.ValidGmail(usuario.Email) ? "esfe-user" : "no-esfe-user";
+
       ClientUser nuevo = new ClientUser()
       {
         Email = usuario.Email,
@@ -36,7 +38,7 @@ public class AuthController : ControllerBase
         RestartAccount = false,
         ConfirmAccount = false,
         Token = UtilsService.RandomCode(),
-        TypeUserId = usuario.TypeUserId
+        TypeUserId = typeUser
 
       };
 

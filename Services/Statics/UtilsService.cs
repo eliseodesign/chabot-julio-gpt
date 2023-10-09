@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ESFE.Chatbot.Services.Statics;
 
@@ -36,5 +37,12 @@ public class UtilsService
     }
 
     return new string(code);
+  }
+
+  public static bool ValidGmail(string email)
+  {
+    // Expresión regular validar formato del correo
+    string patron = @"^[a-zA-Z0-9._%+-]+@esfe\.agape\.edu\.sv$";
+    return Regex.IsMatch(email, patron);
   }
 }
