@@ -40,10 +40,6 @@ public class AuthController : ControllerBase
 
       };
 
-      // nuevo.Password = UtilsService.ConvertSHA256(usuario.Password);
-      // nuevo.Token = UtilsService.RandomCode();
-      // nuevo.RestartAccount = false;
-      // nuevo.ConfirmAccount = false;
       bool respuesta = await _userService.Create(nuevo);
 
       if (respuesta)
