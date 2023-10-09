@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace ESFE.Chatbot.Statics;
+namespace ESFE.Chatbot.Services.Statics;
 
 public class UtilsService
 {
