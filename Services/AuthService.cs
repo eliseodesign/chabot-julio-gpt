@@ -48,7 +48,7 @@ public class AuthService : IAuthService
   }
   public async Task<AuthResponse> GetToken(AuthRequest auth)
   {
-    var usuario_encontrado = await _userService.Validate(auth.UserName, auth.Password);
+    var usuario_encontrado = await _userService.Validate(auth.Email, auth.Password);
 
     if (usuario_encontrado == null)
     {
