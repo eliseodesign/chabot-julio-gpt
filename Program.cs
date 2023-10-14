@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +56,10 @@ builder.Services.AddAuthentication(config =>
 });
 // end JWT config
 
+// builder.Services.AddTransient<RequestLimit>(); // middleware de limites de mensajes
+builder.Services.AddMemoryCache(); // Configurar la memoria caché
+
+
 
 // start swagger
 builder.Services.AddSwaggerGen(c =>
@@ -98,7 +101,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication(); // jwt auth
-
+// app.UseMiddleware<RequestLimit>();
 app.UseAuthorization();
 
 app.MapControllers();
