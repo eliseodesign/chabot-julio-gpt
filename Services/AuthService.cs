@@ -18,7 +18,7 @@ public class AuthService : IAuthService
     _userService = userService;
   }
 
-  private string GenerarToken(string idUsuario)
+  private string GenerarToken(string idUsuario, string typeUser)
   {
 
     var key = _configuration.GetValue<string>("JwtSettings:key");
@@ -26,6 +26,7 @@ public class AuthService : IAuthService
 
     var claims = new ClaimsIdentity();
     claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, idUsuario));
+    claims.AddClaim(new Claim(ClaimTypes.Role, typeUser));
 
     var credencialesToken = new SigningCredentials(
         new SymmetricSecurityKey(keyBytes),
@@ -55,8 +56,7 @@ public class AuthService : IAuthService
       return await Task.FromResult<AuthResponse>(null);
     }
 
-
-    string tokenCreado = GenerarToken(usuario_encontrado.Id.ToString());
+    string tokenCreado = GenerarToken(usuario_encontrado.Id.ToString(), usuario_encontrado.TypeUserId);
 
     //string refreshTokenCreado = GenerarRefreshToken();
 
