@@ -59,7 +59,7 @@ builder.Services.AddAuthentication(config =>
 // builder.Services.AddTransient<RequestLimit>(); // middleware de limites de mensajes
 builder.Services.AddMemoryCache(); // Configurar la memoria caché
 
-builder.WebHost.UseUrls("http://0.0.0.0:5000");
+builder.WebHost.UseUrls("http://*:5000");
 
 // start swagger
 builder.Services.AddSwaggerGen(c =>
