@@ -61,6 +61,17 @@ builder.Services.AddMemoryCache(); // Configurar la memoria caché
 
 builder.WebHost.UseUrls("http://*:5000");
 
+// Agregar configuración CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder => builder
+            .AllowAnyOrigin() // Esto permite cualquier origen
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
+
 // start swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -99,6 +110,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Agregar el middleware CORS para permitir todas las solicitudes
+app.UseCors("AllowAnyOrigin");
 
 app.UseAuthentication(); // jwt auth
 // app.UseMiddleware<RequestLimit>();
