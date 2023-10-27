@@ -20,12 +20,12 @@ public class ClienteUserService : IClienteUserService
     public async Task<bool> Delete(int id) => await _userRepo.Delete(id);
 
     public Task<IQueryable<ClientUser>> GetAll() => _userRepo.GetAll();
-    public async Task<bool> ConfirmAccount(string token, int userId)
+    public async Task<bool> ConfirmAccount(string token)
     {
         try
         {
             var users = await _userRepo.GetAll();
-            ClientUser existingClientUser = await users.FirstAsync(a => a.Id == userId && a.Token == token);
+            ClientUser existingClientUser = await users.FirstAsync(a => a.Token == token);
             existingClientUser.ConfirmAccount = true;
 
             await _userRepo.Update(existingClientUser);
@@ -73,6 +73,20 @@ public class ClienteUserService : IClienteUserService
         catch
         {
             return null;
+        }
+    }
+
+     public async Task<bool> ValidateConfirm(string email)
+    {
+        try
+        {
+            var users = await _userRepo.GetAll();
+            var result = await users.FirstAsync(a => a.Email == email && a.ConfirmAccount == true);
+            return true;
+        }
+        catch
+        {
+            return false;
         }
     }
 }

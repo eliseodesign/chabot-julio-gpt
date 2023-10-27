@@ -10,7 +10,8 @@ public interface IClienteUserService
   Task<IQueryable<ClientUser>> GetAll();
   Task<ClientUser?> GetById(int id);
   Task<ClientUser?> Validate(string email, string password);
+  Task<bool> ValidateConfirm(string email);
   Task<ClientUser?> GetByEmail(string email);
   Task<bool> RestartAccount(bool restart, string password, string token);
-  Task<bool> ConfirmAccount(string token, int userID);
+  Task<bool> ConfirmAccount(string token);
 }

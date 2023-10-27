@@ -29,13 +29,19 @@ public class AuthController : ControllerBase
   [Route("login")]
   public async Task<IActionResult> Login([FromBody] AuthRequest auth)
   {
+    bool isVerifiedAccount = await _userService.ValidateConfirm(auth.Email);
+    
+    if(isVerifiedAccount == false){
+      return BadRequest(Res.Provider(new {}, "Debe confirmar su cuenta para iniciar sesión", false));
+    }
+
     auth.Password = UtilsService.ConvertSHA256(auth.Password);
     var result = await _authService.GetToken(auth);
     if(result == null)
     {
-      return Unauthorized();
+      return Unauthorized(Res.Provider(new {}, "Usuario invalido", false));
     }
-    return Ok(result);
+    return Ok(Res.Provider(result, "Usuario encontrado", true));
   }
 
   [Authorize]
@@ -43,7 +49,7 @@ public class AuthController : ControllerBase
   [Route("ping")]
   public async Task<IActionResult> Ping()
   {
-    return Ok(new { pong = "pong"});
+    return Ok(Res.Provider(new {}, "Pong", true));
   }
   [HttpPost]
   [Route("register")]
@@ -87,36 +93,36 @@ public class AuthController : ControllerBase
         bool enviado = _emailService.SendEmail(EmailDTO);
         if (enviado == true)
         {
-          return Ok(Res.Provider($"Su cuenta ha sido creada. Hemos enviado un mensaje al correo {usuario.Email} para confirmar su cuenta", "Operación exitosa", true));
+          return Ok(Res.Provider(new {}, $"Su cuenta ha sido creada. Hemos enviado un mensaje al correo {usuario.Email} para confirmar su cuenta", true));
         }
         else
         {
-          return BadRequest(Res.Provider($"Su cuenta no se pudo crear", "Verifique su gmail", true));
+          return BadRequest(Res.Provider(new {}, "Su cuenta no se pudo crear", true));
         }
       }
       else
       {
-        return BadRequest(Res.Provider(new { }, "No se pudo crear su cuenta", false));
+        return BadRequest(Res.Provider(new {}, "No se pudo crear su cuenta", false));
       }
     }
     else
     {
-      return BadRequest(Res.Provider(new { }, $"Ya existe un usuario registrado con {usuario.Email}", false));
+      return BadRequest(Res.Provider(new {}, $"Ya existe un usuario registrado con {usuario.Email}", false));
     }
   }
 
   [HttpGet]
   [Route("verify")]
-  public async Task<IActionResult> Confirm(string token, int userId)
+  public async Task<IActionResult> Confirm(string token)
   {
-    bool result = await _userService.ConfirmAccount(token, userId);
+    bool result = await _userService.ConfirmAccount(token);
     if (result == true)
     {
-      return Ok(Res.Provider("Cuenta confirmada", "Ya puede aplicar a ofertas", true));
+      return Ok(Res.Provider(new {}, "Cuenta confirmada", true));
     }
     else
     {
-      return BadRequest(Res.Provider("Error al confirmar cuenta", "Error", false));
+      return BadRequest(Res.Provider(new  {}, "Error al confirmar cuenta", false));
     }
   }
 
