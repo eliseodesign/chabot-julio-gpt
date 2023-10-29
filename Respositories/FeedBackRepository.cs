@@ -3,15 +3,15 @@ using ESFE.Chatbot.Repositories;
 
 namespace ESFE.Chatbot;
 
-public class FeedBackRepository : IGenericRepository<FeedBack>
+public class FeedbackRepository : IGenericRepository<Feedback>
 {
-  private readonly ChatBotDbContext _db;
-  public FeedBackRepository(ChatBotDbContext db)
+  private readonly AuthdbContext _db;
+  public FeedbackRepository(AuthdbContext db)
   {
     _db = db;
   }
 
-   public async Task<bool> Create(FeedBack model)
+   public async Task<bool> Create(Feedback model)
   {
     try
     {
@@ -26,7 +26,7 @@ public class FeedBackRepository : IGenericRepository<FeedBack>
     }
   }
 
-  public async Task<bool> Update(FeedBack model)
+  public async Task<bool> Update(Feedback model)
   {
     try
     {
@@ -43,7 +43,7 @@ public class FeedBackRepository : IGenericRepository<FeedBack>
 
   public async Task<bool> Delete(int id)
   {
-    var user = await _db.FeedBacks.FindAsync(id);
+    var user = await _db.Feedbacks.FindAsync(id);
     if (user == null)
       return false;
 
@@ -60,13 +60,13 @@ public class FeedBackRepository : IGenericRepository<FeedBack>
     }
   }
 
-  public async Task<IQueryable<FeedBack>> GetAll()
+  public async Task<IQueryable<Feedback>> GetAll()
   {
-    return await Task.FromResult(_db.FeedBacks.AsQueryable());
+    return await Task.FromResult(_db.Feedbacks.AsQueryable());
   }
 
-  public async Task<FeedBack?> GetById(int id)
+  public async Task<Feedback?> GetById(int id)
   {
-    return await _db.FeedBacks.FindAsync(id);
+    return await _db.Feedbacks.FindAsync(id);
   }
 }

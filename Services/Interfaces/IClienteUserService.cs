@@ -4,14 +4,14 @@ namespace ESFE.Chatbot.Services.Interfaces;
 
 public interface IClienteUserService
 {
-  Task<bool> Create(ClientUser model);
-  Task<bool> Update(ClientUser model);
+  Task<bool> Create(Clientuser model);
+  Task<bool> Update(Clientuser model);
   Task<bool> Delete(int id);
-  Task<IQueryable<ClientUser>> GetAll();
-  Task<ClientUser?> GetById(int id);
-  Task<ClientUser?> Validate(string email, string password);
+  Task<IQueryable<Clientuser>> GetAll();
+  Task<Clientuser?> GetById(int id);
+  Task<Clientuser?> Validate(string email, string password);
   Task<bool> ValidateConfirm(string email);
-  Task<ClientUser?> GetByEmail(string email);
+  Task<Clientuser?> GetByEmail(string email);
   Task<bool> RestartAccount(bool restart, string password, string token);
   Task<bool> ConfirmAccount(string token);
 }

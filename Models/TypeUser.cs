@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ESFE.Chatbot.Models;
 
-public partial class TypeUser
+public partial class Typeuser
 {
-    public string TypeName { get; set; } = null!;
+    public string Typename { get; set; } = null!;
 
-    public virtual ICollection<ClientUser> ClientUsers { get; set; } = new List<ClientUser>();
+    public virtual ICollection<Clientuser> Clientusers { get; set; } = new List<Clientuser>();
 }

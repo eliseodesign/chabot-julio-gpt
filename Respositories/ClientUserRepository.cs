@@ -3,15 +3,15 @@ using ESFE.Chatbot.Repositories;
 
 namespace ESFE.Chatbot;
 
-public class ClientUserRepository : IGenericRepository<ClientUser>
+public class ClientuserRepository : IGenericRepository<Clientuser>
 {
-  private readonly ChatBotDbContext _db;
+  private readonly AuthdbContext _db;
 
-  public ClientUserRepository(ChatBotDbContext db)
+  public ClientuserRepository(AuthdbContext db)
   {
     _db = db;
   }
-  public async Task<bool> Create(ClientUser model)
+  public async Task<bool> Create(Clientuser model)
   {
     try
     {
@@ -26,7 +26,7 @@ public class ClientUserRepository : IGenericRepository<ClientUser>
     }
   }
 
-  public async Task<bool> Update(ClientUser model)
+  public async Task<bool> Update(Clientuser model)
   {
     try
     {
@@ -43,7 +43,7 @@ public class ClientUserRepository : IGenericRepository<ClientUser>
 
   public async Task<bool> Delete(int id)
   {
-    var user = await _db.ClientUsers.FindAsync(id);
+    var user = await _db.Clientusers.FindAsync(id);
     if (user == null)
       return false;
 
@@ -60,14 +60,14 @@ public class ClientUserRepository : IGenericRepository<ClientUser>
     }
   }
 
-  public async Task<IQueryable<ClientUser>> GetAll()
+  public async Task<IQueryable<Clientuser>> GetAll()
   {
-    return await Task.FromResult(_db.ClientUsers.AsQueryable());
+    return await Task.FromResult(_db.Clientusers.AsQueryable());
   }
 
-  public async Task<ClientUser?> GetById(int id)
+  public async Task<Clientuser?> GetById(int id)
   {
-    return await _db.ClientUsers.FindAsync(id);
+    return await _db.Clientusers.FindAsync(id);
   }
 
 }

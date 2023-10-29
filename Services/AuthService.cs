@@ -64,17 +64,17 @@ public class AuthService : IAuthService
     if (userFound == null)
       return new AuthResponse(){ Token = "", Result = false, Message = "Contraseña Incorrecta", User = null};
 
-    string tokenCreado = GenerarToken(userFound.Id.ToString(), userFound.TypeUserId);
+    string tokenCreado = GenerarToken(userFound.Id.ToString(), userFound.Typeuserid);
 
     //string refreshTokenCreado = GenerarRefreshToken();
 
     LoginResponse user = new LoginResponse(){
       Id = userFound.Id,
-      FirstName = userFound.FirstName,
-      LastName = userFound.LastName,
-      BadConduct = userFound.BadConduct,
+      FirstName = userFound.Firstname,
+      LastName = userFound.Lastname,
+      BadConduct = userFound.Badconduct,
       Email = userFound.Email,
-      TypeUserId = userFound.TypeUserId,
+      TypeUserId = userFound.Typeuserid,
       Banned = userFound.Banned
     };
 

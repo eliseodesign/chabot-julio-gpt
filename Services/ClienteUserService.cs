@@ -8,27 +8,27 @@ namespace ESFE.Chatbot.Services;
 public class ClienteUserService : IClienteUserService
 {
 
-    private readonly IGenericRepository<ClientUser> _userRepo;
-    public ClienteUserService(IGenericRepository<ClientUser> userRepo)
+    private readonly IGenericRepository<Clientuser> _userRepo;
+    public ClienteUserService(IGenericRepository<Clientuser> userRepo)
     {
         _userRepo = userRepo;
     }
 
-    public async Task<bool> Create(ClientUser model) => await _userRepo.Create(model);
+    public async Task<bool> Create(Clientuser model) => await _userRepo.Create(model);
 
-    public async Task<bool> Update(ClientUser model) => await _userRepo.Update(model);
+    public async Task<bool> Update(Clientuser model) => await _userRepo.Update(model);
     public async Task<bool> Delete(int id) => await _userRepo.Delete(id);
 
-    public Task<IQueryable<ClientUser>> GetAll() => _userRepo.GetAll();
+    public Task<IQueryable<Clientuser>> GetAll() => _userRepo.GetAll();
     public async Task<bool> ConfirmAccount(string token)
     {
         try
         {
             var users = await _userRepo.GetAll();
-            ClientUser existingClientUser = await users.FirstAsync(a => a.Token == token);
-            existingClientUser.ConfirmAccount = true;
+            Clientuser existingClientuser = await users.FirstAsync(a => a.Token == token);
+            existingClientuser.Confirmaccount = true;
 
-            await _userRepo.Update(existingClientUser);
+            await _userRepo.Update(existingClientuser);
             return true;
         }
         catch
@@ -37,7 +37,7 @@ public class ClienteUserService : IClienteUserService
         }
     }
 
-    public async Task<ClientUser?> GetByEmail(string email)
+    public async Task<Clientuser?> GetByEmail(string email)
     {
         try
         {
@@ -51,7 +51,7 @@ public class ClienteUserService : IClienteUserService
         }
     }
 
-    public Task<ClientUser?> GetById(int id)
+    public Task<Clientuser?> GetById(int id)
     {
         throw new NotImplementedException();
     }
@@ -62,7 +62,7 @@ public class ClienteUserService : IClienteUserService
     }
 
 
-    public async Task<ClientUser?> Validate(string email, string password)
+    public async Task<Clientuser?> Validate(string email, string password)
     {
         try
         {
@@ -81,7 +81,7 @@ public class ClienteUserService : IClienteUserService
         try
         {
             var users = await _userRepo.GetAll();
-            var result = await users.FirstAsync(a => a.Email == email && a.ConfirmAccount == true);
+            var result = await users.FirstAsync(a => a.Email == email && a.Confirmaccount == true);
             return true;
         }
         catch

@@ -11,7 +11,7 @@ public class LoginResponse
 
     public int? BadConduct { get; set; }
 
-    public int Banned { get; set; }
+    public bool? Banned { get; set; }
 
     public string? TypeUserId { get; set; }
 }

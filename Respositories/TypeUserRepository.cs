@@ -3,13 +3,13 @@ using ESFE.Chatbot.Repositories;
 
 namespace ESFE.Chatbot;
 
-public class TypeUserRepository : IGenericRepository<TypeUser>
+public class TypeuserRepository : IGenericRepository<Typeuser>
 {
-  private readonly ChatBotDbContext _db;
-  public TypeUserRepository(ChatBotDbContext db){
+  private readonly AuthdbContext _db;
+  public TypeuserRepository(AuthdbContext db){
     _db = db;
   }
-  public Task<bool> Create(TypeUser model)
+  public Task<bool> Create(Typeuser model)
   {
     throw new NotImplementedException();
   }
@@ -19,17 +19,17 @@ public class TypeUserRepository : IGenericRepository<TypeUser>
     throw new NotImplementedException();
   }
 
-  public async Task<IQueryable<TypeUser>> GetAll()
+  public async Task<IQueryable<Typeuser>> GetAll()
   {
-    return await Task.FromResult(_db.TypeUsers.AsQueryable());
+    return await Task.FromResult(_db.Typeusers.AsQueryable());
   }
 
-  public Task<TypeUser?> GetById(int id)
+  public Task<Typeuser?> GetById(int id)
   {
     throw new NotImplementedException();
   }
 
-  public Task<bool> Update(TypeUser model)
+  public Task<bool> Update(Typeuser model)
   {
     throw new NotImplementedException();
   }

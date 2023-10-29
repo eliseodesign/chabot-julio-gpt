@@ -54,16 +54,16 @@ public class AuthController : ControllerBase
     {
       string typeUser = UtilsService.ValidGmail(usuario.Email) ? "esfe-user" : "no-esfe-user";
 
-      ClientUser nuevo = new ClientUser()
+      Clientuser nuevo = new Clientuser()
       {
         Email = usuario.Email,
         Password = UtilsService.ConvertSHA256(usuario.Password),
-        FirstName = usuario.FirstName,
-        LastName = usuario.LastName,
-        RestartAccount = false,
-        ConfirmAccount = false,
+        Firstname = usuario.FirstName,
+        Lastname = usuario.LastName,
+        Restartaccount = false,
+        Confirmaccount = false,
         Token = UtilsService.RandomCode(),
-        TypeUserId = typeUser
+        Typeuserid = typeUser
 
       };
 

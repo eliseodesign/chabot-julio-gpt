@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ESFE.Chatbot.Models;
 
-public partial class ClientUser
+public partial class Clientuser
 {
     public int Id { get; set; }
 
@@ -11,23 +11,23 @@ public partial class ClientUser
 
     public string Email { get; set; } = null!;
 
-    public bool? RestartAccount { get; set; }
+    public bool? Restartaccount { get; set; }
 
-    public bool? ConfirmAccount { get; set; }
+    public bool? Confirmaccount { get; set; }
 
     public string? Token { get; set; }
 
-    public string FirstName { get; set; } = null!;
+    public string Firstname { get; set; } = null!;
 
-    public string LastName { get; set; } = null!;
+    public string Lastname { get; set; } = null!;
 
-    public int? BadConduct { get; set; }
+    public int? Badconduct { get; set; }
 
-    public int Banned { get; set; }
+    public bool? Banned { get; set; }
 
-    public string? TypeUserId { get; set; }
+    public string? Typeuserid { get; set; }
 
-    public virtual ICollection<FeedBack> FeedBacks { get; set; } = new List<FeedBack>();
+    public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
-    public virtual TypeUser? TypeUser { get; set; }
+    public virtual Typeuser? Typeuser { get; set; }
 }
