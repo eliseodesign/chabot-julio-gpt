@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
 
+var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -58,7 +58,7 @@ builder.Services.AddAuthentication(config =>
 
 // builder.Services.AddTransient<RequestLimit>(); // middleware de limites de mensajes
 builder.Services.AddMemoryCache(); // Configurar la memoria caché
-
+builder.Services.AddHttpClient(); //Añade una sola instancia de HttpClient
 builder.WebHost.UseUrls("http://*:5000");
 
 // Agregar configuración CORS
