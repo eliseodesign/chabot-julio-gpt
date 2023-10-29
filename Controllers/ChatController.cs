@@ -2,9 +2,18 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using ESFE.Chatbot.Services.Statics;
 using System.Linq;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using System.Net.Http;
+using System.Text.Json;
+using ESFE.Chatbot.Models.Chat;
+using Microsoft.VisualBasic;
+using dotenv.net;
+
 
 namespace ESFE.Chatbot.Controllers
 {
@@ -13,23 +22,27 @@ namespace ESFE.Chatbot.Controllers
   public class ChatController : ControllerBase
   {
     private readonly IMemoryCache _cache;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public ChatController(IMemoryCache cache)
+    public ChatController(IMemoryCache cache, IHttpClientFactory  httpClientFactory)
     {
       _cache = cache;
+      _httpClientFactory = httpClientFactory;
     }
 
     [Authorize]
     [HttpGet]
-    public IActionResult GetData()
+    public async Task<IActionResult> GetData([FromQuery] string query)
     {
+      DotEnv.Load();
+      
       // Obtiene el token JWT del encabezado de la solicitud
       var jwtToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-   
+
       if (string.IsNullOrEmpty(jwtToken))
       {
         return BadRequest("Token JWT no válido");
-      }
+      } 
 
       try
       {
@@ -69,10 +82,29 @@ namespace ESFE.Chatbot.Controllers
         };
         _cache.Set(cacheKey, requestCount, cacheEntryOptions);
 
-        // Realiza la lógica de tu acción aquí
-        // return Ok(new { test = true });
+        try
+        {
+            HttpClient client = _httpClientFactory.CreateClient();
+            var envVars = DotEnv.Read();
+            string url = envVars["CHATBOT_API"];
+            HttpResponseMessage response = await client.GetAsync(url+query);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var chat = JsonSerializer.Deserialize<Chat>(content);
 
-        return Ok(new { UserId = userId, Message = "Datos obtenidos correctamente." });
+                return Ok(Res.Provider(chat, "Datos obtenidos correctamente", true));
+            }
+            else
+            {
+                return BadRequest($"Error en la respuesta: {response}");
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error al intentar obtener el chat: {ex.Message}");
+        }
       }
       catch (Exception ex)
       {
