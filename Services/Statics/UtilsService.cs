@@ -39,10 +39,31 @@ public class UtilsService
     return new string(code);
   }
 
-  public static bool ValidGmail(string email)
+  public static bool ValidEsfeEmail(string email)
   {
     // Expresión regular validar formato del correo
     string patron = @"^[a-zA-Z0-9._%+-]+@esfe\.agape\.edu\.sv$";
     return Regex.IsMatch(email, patron);
   }
+
+  public static string? ValidCredentials(string email, string password)
+{
+    // Expresión regular para validar un correo electrónico
+    string emailPattern = @"^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$";
+
+    if (!Regex.IsMatch(email, emailPattern))
+    {
+        return "El correo electrónico no es válido.";
+    }
+
+    // Validar la contraseña
+    if (string.IsNullOrEmpty(password) || password.Length < 8)
+    {
+        return "La contraseña debe tener al menos 8 caracteres.";
+    }
+    
+    // Si todos los criterios pasan, devuelve null para indicar que todo es correcto.
+    return null;
+}
+
 }
