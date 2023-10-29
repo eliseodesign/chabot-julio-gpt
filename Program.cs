@@ -18,14 +18,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ChatBotDbContext>(options =>
+builder.Services.AddDbContext<AuthdbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ChatBotDbContext"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("AuthdbContext"));
 });
 
-builder.Services.AddScoped<IGenericRepository<ClientUser>, ClientUserRepository>();
-builder.Services.AddScoped<IGenericRepository<FeedBack>, FeedBackRepository>();
-builder.Services.AddScoped<IGenericRepository<TypeUser>, TypeUserRepository>();
+builder.Services.AddScoped<IGenericRepository<Clientuser>, ClientuserRepository>();
+builder.Services.AddScoped<IGenericRepository<Feedback>, FeedbackRepository>();
+builder.Services.AddScoped<IGenericRepository<Typeuser>, TypeuserRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IClienteUserService, ClienteUserService>();
