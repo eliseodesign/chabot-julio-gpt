@@ -1,4 +1,5 @@
 using System.Text;
+using dotenv.net;
 using ESFE.Chatbot;
 using ESFE.Chatbot.Models;
 using ESFE.Chatbot.Repositories;
@@ -9,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+// env config
+DotEnv.Load();
+var envVars = DotEnv.Read();
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -18,9 +22,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var stringConn = envVars["STRING_DB_CONN"];
+
+Console.WriteLine("STRING_DB_CONN: " + stringConn);
+
 builder.Services.AddDbContext<AuthdbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("AuthdbContext"));
+    options.UseNpgsql(stringConn);
 });
 
 builder.Services.AddScoped<IGenericRepository<Clientuser>, ClientuserRepository>();
@@ -33,7 +41,7 @@ builder.Services.AddScoped<IClienteUserService, ClienteUserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // start JWT config
-var key = builder.Configuration.GetValue<string>("JwtSettings:key");
+var key = envVars["JWT_KEY"];
 var keyBytes = Encoding.ASCII.GetBytes(key);
 
 builder.Services.AddAuthentication(config =>

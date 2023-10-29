@@ -1,4 +1,5 @@
-﻿using ESFE.Chatbot.Models.DTOs;
+﻿using dotenv.net;
+using ESFE.Chatbot.Models.DTOs;
 using ESFE.Chatbot.Services.Interfaces;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -18,11 +19,13 @@ public class EmailService : IEmailService
   {
     try
     {
+      DotEnv.Load();
+      var envVars = DotEnv.Read();
       var Host = _config.GetSection("Email:Host").Value;
       int Port = Convert.ToInt32(_config.GetSection("Email:Port").Value);
       var UserName = _config.GetSection("Email:UserName").Value;
       var Account = _config.GetSection("Email:Account").Value;
-      var Password = _config.GetSection("Email:Password").Value;
+      var Password = envVars["GMAIL_PASSWORD"];
 
       var email = new MimeMessage();
       email.From.Add(new MailboxAddress(UserName, Account));
