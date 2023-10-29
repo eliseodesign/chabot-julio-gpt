@@ -6,5 +6,5 @@ public class AuthResponse
     public required string Token { get; set; }
     public bool Result { get; set; }
     public required string Message { get; set; }
-    public ClientUser? User {get;set;}
+    public LoginResponse? User {get;set;}
 }

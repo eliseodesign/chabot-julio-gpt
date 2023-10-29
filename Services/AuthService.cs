@@ -49,21 +49,37 @@ public class AuthService : IAuthService
   }
   public async Task<AuthResponse> GetToken(AuthRequest auth)
   {
-    var usuario_encontrado = await _userService.Validate(auth.Email, auth.Password);
+    // validar cuenta 
+    var exists = await _userService.GetByEmail(auth.Email);
+    if(exists == null) 
+      return new AuthResponse(){ Token = "", Result = false, Message = "No existe el usuario", User = null};
+    
+    // validar cuenta confirmada
+    bool isVerifiedAccount = await _userService.ValidateConfirm(auth.Email);
+    if(isVerifiedAccount == false)
+      return new AuthResponse(){ Token = "", Result = false, Message = "Debe confirmar su cuenta para iniciar sesión", User = null};
+    
+    // validar credenciales
+    var userFound = await _userService.Validate(auth.Email, auth.Password);
+    if (userFound == null)
+      return new AuthResponse(){ Token = "", Result = false, Message = "Contraseña Incorrecta", User = null};
 
-    if (usuario_encontrado == null)
-    {
-      return await Task.FromResult<AuthResponse>(null);
-    }
-
-    string tokenCreado = GenerarToken(usuario_encontrado.Id.ToString(), usuario_encontrado.TypeUserId);
+    string tokenCreado = GenerarToken(userFound.Id.ToString(), userFound.TypeUserId);
 
     //string refreshTokenCreado = GenerarRefreshToken();
 
-    return new AuthResponse() { Token = tokenCreado, Result = true, Message = "Ok", User = usuario_encontrado };
+    LoginResponse user = new LoginResponse(){
+      Id = userFound.Id,
+      FirstName = userFound.FirstName,
+      LastName = userFound.LastName,
+      BadConduct = userFound.BadConduct,
+      Email = userFound.Email,
+      TypeUserId = userFound.TypeUserId,
+      Banned = userFound.Banned
+    };
 
-    //return await GuardarHistorialRefreshToken(usuario_encontrado.IdUsuario, tokenCreado, refreshTokenCreado);
+    return new AuthResponse() { Token = tokenCreado, Result = true, Message = "Ok", User = user };
 
-
+    //return await GuardarHistorialRefreshToken(userFound.IdUsuario, tokenCreado, refreshTokenCreado);
   }
 }

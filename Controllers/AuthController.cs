@@ -29,22 +29,17 @@ public class AuthController : ControllerBase
   [Route("login")]
   public async Task<IActionResult> Login([FromBody] AuthRequest auth)
   {
-    bool isVerifiedAccount = await _userService.ValidateConfirm(auth.Email);
-    
-    if(isVerifiedAccount == false){
-      return BadRequest(Res.Provider(new {}, "Debe confirmar su cuenta para iniciar sesión", false));
-    }
-
     auth.Password = UtilsService.ConvertSHA256(auth.Password);
     var result = await _authService.GetToken(auth);
-    if(result == null)
+    if(result.Result == false)
     {
-      return Unauthorized(Res.Provider(new {}, "Usuario invalido", false));
+      return Unauthorized(Res.Provider(new {}, result.Message, false));
     }
+    
     return Ok(Res.Provider(result, "Usuario encontrado", true));
   }
 
-  [Authorize]
+  // [Authorize]
   [HttpPost]
   [Route("ping")]
   public async Task<IActionResult> Ping()
