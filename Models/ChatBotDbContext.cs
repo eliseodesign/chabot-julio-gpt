@@ -23,7 +23,7 @@ public partial class ChatBotDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        
+
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,6 +33,8 @@ public partial class ChatBotDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__ClientUs__3214EC07627DAAB3");
 
             entity.ToTable("ClientUser");
+
+            entity.HasIndex(e => e.TypeUserId, "IX_ClientUser_TypeUserId");
 
             entity.HasIndex(e => e.Email, "UQ__ClientUs__A9D10534C8A10572").IsUnique();
 
@@ -68,6 +70,8 @@ public partial class ChatBotDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__FeedBack__3214EC075FD8F0AA");
 
             entity.ToTable("FeedBack");
+
+            entity.HasIndex(e => e.ClientUserId, "IX_FeedBack_ClientUserId");
 
             entity.Property(e => e.Message)
                 .HasMaxLength(200)
