@@ -21,20 +21,27 @@ namespace ESFE.Chatbot.Controllers
   [Route("api/[controller]")]
   public class ChatController : ControllerBase
   {
+  //   private readonly IConfiguration _config;
+  // public EmailService(IConfiguration config)
+  // {
+  //   _config = config;
+  // }
+
+    private readonly IConfiguration _config;
     private readonly IMemoryCache _cache;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public ChatController(IMemoryCache cache, IHttpClientFactory  httpClientFactory)
+    public ChatController(IMemoryCache cache, IHttpClientFactory  httpClientFactory, IConfiguration config)
     {
       _cache = cache;
       _httpClientFactory = httpClientFactory;
+      _config = config;
     }
 
     [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetData([FromQuery] string query)
     {
-      DotEnv.Load();
       
       // Obtiene el token JWT del encabezado de la solicitud
       var jwtToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
@@ -85,8 +92,8 @@ namespace ESFE.Chatbot.Controllers
         try
         {
             HttpClient client = _httpClientFactory.CreateClient();
-            var envVars = DotEnv.Read();
-            string url = envVars["CHATBOT_API"];
+
+            var url = _config.GetValue<string>("ApisUrls:ChaBot");
             HttpResponseMessage response = await client.GetAsync(url+query);
             
             if (response.IsSuccessStatusCode)
