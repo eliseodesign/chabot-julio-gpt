@@ -29,6 +29,11 @@ public class AuthController : ControllerBase
   [Route("login")]
   public async Task<IActionResult> Login([FromBody] AuthRequest auth)
   {
+    string? validCredentials = UtilsService.ValidCredentials(auth.Email, auth.Password);
+    if (validCredentials != null)
+    {
+      return BadRequest(Res.Provider(new {}, validCredentials, false));
+    }
     auth.Password = UtilsService.ConvertSHA256(auth.Password);
     var result = await _authService.GetToken(auth);
     if(result.Result == false)
@@ -50,9 +55,15 @@ public class AuthController : ControllerBase
   [Route("register")]
   public async Task<IActionResult> Reg([FromBody] CreateClientUser usuario)
   {
+    string? validCredentials = UtilsService.ValidCredentials(usuario.Email, usuario.Password);
+    if (validCredentials != null)
+    {
+      return BadRequest(Res.Provider(new {}, validCredentials, false));
+    }
+
     if (await _userService.GetByEmail(usuario.Email) == null)
     {
-      string typeUser = UtilsService.ValidGmail(usuario.Email) ? "esfe-user" : "no-esfe-user";
+      string typeUser = UtilsService.ValidEsfeEmail(usuario.Email) ? "esfe-user" : "no-esfe-user";
 
       Clientuser nuevo = new Clientuser()
       {
