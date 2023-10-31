@@ -1,4 +1,5 @@
-﻿using ESFE.Chatbot.Models;
+﻿using System.Reflection;
+using ESFE.Chatbot.Models;
 using ESFE.Chatbot.Models.DTOs;
 using ESFE.Chatbot.Schemas;
 using ESFE.Chatbot.Services.Interfaces;
@@ -32,15 +33,15 @@ public class AuthController : ControllerBase
     string? validCredentials = UtilsService.ValidCredentials(auth.Email, auth.Password);
     if (validCredentials != null)
     {
-      return BadRequest(Res.Provider(new {}, validCredentials, false));
+      return BadRequest(Res.Provider(new { }, validCredentials, false));
     }
     auth.Password = UtilsService.ConvertSHA256(auth.Password);
     var result = await _authService.GetToken(auth);
-    if(result.Result == false)
+    if (result.Result == false)
     {
-      return Unauthorized(Res.Provider(new {}, result.Message, false));
+      return Unauthorized(Res.Provider(new { }, result.Message, false));
     }
-    
+
     return Ok(Res.Provider(result, "Usuario encontrado", true));
   }
 
@@ -49,7 +50,7 @@ public class AuthController : ControllerBase
   [Route("ping")]
   public async Task<IActionResult> Ping()
   {
-    return Ok(Res.Provider(new {}, "Pong", true));
+    return Ok(Res.Provider(new { }, "Pong", true));
   }
   [HttpPost]
   [Route("register")]
@@ -58,7 +59,7 @@ public class AuthController : ControllerBase
     string? validCredentials = UtilsService.ValidCredentials(usuario.Email, usuario.Password);
     if (validCredentials != null)
     {
-      return BadRequest(Res.Provider(new {}, validCredentials, false));
+      return BadRequest(Res.Provider(new { }, validCredentials, false));
     }
 
     if (await _userService.GetByEmail(usuario.Email) == null)
@@ -82,7 +83,10 @@ public class AuthController : ControllerBase
 
       if (respuesta)
       {
-        string content = this.GetFileContent("Templates/VerifyEmail.html");
+        // TODO: FIX
+        // string content = this.GetFileContent("Templates/VerifyEmail.html");
+        string content = this.GetFileContent();
+
         content = content.Replace("{{FirstName}}", usuario.FirstName);
         content = content.Replace("{{LastName}}", usuario.LastName);
         content = content.Replace("{{Token}}", nuevo.Token);
@@ -99,21 +103,21 @@ public class AuthController : ControllerBase
         bool enviado = _emailService.SendEmail(EmailDTO);
         if (enviado == true)
         {
-          return Ok(Res.Provider(new {}, $"Su cuenta ha sido creada. Hemos enviado un mensaje al correo {usuario.Email} para confirmar su cuenta", true));
+          return Ok(Res.Provider(new { }, $"Su cuenta ha sido creada. Hemos enviado un mensaje al correo {usuario.Email} para confirmar su cuenta", true));
         }
         else
         {
-          return BadRequest(Res.Provider(new {}, "Su cuenta no se pudo crear", true));
+          return BadRequest(Res.Provider(new { }, "Su cuenta no se pudo crear", true));
         }
       }
       else
       {
-        return BadRequest(Res.Provider(new {}, "No se pudo crear su cuenta", false));
+        return BadRequest(Res.Provider(new { }, "No se pudo crear su cuenta", false));
       }
     }
     else
     {
-      return BadRequest(Res.Provider(new {}, $"Ya existe un usuario registrado con {usuario.Email}", false));
+      return BadRequest(Res.Provider(new { }, $"Ya existe un usuario registrado con {usuario.Email}", false));
     }
   }
 
@@ -124,25 +128,80 @@ public class AuthController : ControllerBase
     bool result = await _userService.ConfirmAccount(token);
     if (result == true)
     {
-      return Ok(Res.Provider(new {}, "Cuenta confirmada", true));
+      return Ok(Res.Provider(new { }, "Cuenta confirmada", true));
     }
     else
     {
-      return BadRequest(Res.Provider(new  {}, "Error al confirmar cuenta", false));
+      return BadRequest(Res.Provider(new { }, "Error al confirmar cuenta", false));
     }
   }
 
 
-  private string GetFileContent(string filePath)
+  // private string GetFileContent(string filePath)
+  // {
+  //   string basePath = _webHostEnvironment.ContentRootPath;
+  //   string fullPath = Path.Combine(basePath, filePath);
+
+  //   if (System.IO.File.Exists(fullPath))
+  //   {
+  //     return System.IO.File.ReadAllText(fullPath);
+  //   }
+
+  //   throw new FileNotFoundException("El archivo no existe", fullPath);
+  // }
+
+  // TODO!: METODO TEMPORAL -> FIX : problema en producción docker no encuentra el archivo
+  // probabablemente por la estructura de carpetas o por los permisos
+  private string GetFileContent()
   {
-    string basePath = _webHostEnvironment.ContentRootPath;
-    string fullPath = Path.Combine(basePath, filePath);
+    return @"
+       <!DOCTYPE html>
+<html lang='es'>
 
-    if (System.IO.File.Exists(fullPath))
-    {
-      return System.IO.File.ReadAllText(fullPath);
-    }
+<head>
+    <style>
+        body {
+            font-family: Sans-serif;
+        }
 
-    throw new FileNotFoundException("El archivo no existe", fullPath);
+        .container {
+            width: 600px;
+            padding: 20px;
+            border: 1px solid #DBDBDB;
+            border-radius: 12px;
+        }
+
+        .header {
+            color: #6199c7;
+            display: flex;
+            align-items: center;
+        }
+        .header h1{
+            font-family: 3em;
+        }
+
+        .header img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        p{
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='container'>
+        <h1 class='header'>
+            <img src='https://i.ibb.co/dQTK7wR/logo128.png' /> Hola {{FirstName}}, soy JulioGPT
+        </h1>
+        <p> Te escribo para verificar tu cuenta. <br>
+        El codigo es: <b style='font-size: large; font-weight: bold;'>{{Token}}</b></p>
+    </div>
+</body>
+
+</html>
+       ";
   }
 }
