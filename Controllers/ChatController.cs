@@ -21,102 +21,92 @@ namespace ESFE.Chatbot.Controllers
   [Route("api/[controller]")]
   public class ChatController : ControllerBase
   {
-  //   private readonly IConfiguration _config;
-  // public EmailService(IConfiguration config)
-  // {
-  //   _config = config;
-  // }
+    //   private readonly IConfiguration _config;
+    // public EmailService(IConfiguration config)
+    // {
+    //   _config = config;
+    // }
 
     private readonly IConfiguration _config;
     private readonly IMemoryCache _cache;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public ChatController(IMemoryCache cache, IHttpClientFactory  httpClientFactory, IConfiguration config)
+    public ChatController(IMemoryCache cache, IHttpClientFactory httpClientFactory, IConfiguration config)
     {
       _cache = cache;
       _httpClientFactory = httpClientFactory;
       _config = config;
     }
 
+    [HttpGet]
+    [Route("test")]
+    public async Task<IActionResult> Test()
+    {
+      return Ok(Res.Provider(new { }, "Test", true));
+    }
     [Authorize]
     [HttpGet]
+    [Route("user")]
     public async Task<IActionResult> GetData([FromQuery] string query)
     {
-      
-      // Obtiene el token JWT del encabezado de la solicitud
-      var jwtToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
-      if (string.IsNullOrEmpty(jwtToken))
-      {
-        return BadRequest("Token JWT no válido");
-      } 
 
       try
       {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.ReadJwtToken(jwtToken);
+        HttpClient client = _httpClientFactory.CreateClient();
 
-        // Accede al ID de usuario desde las reclamaciones (claims) del token
-        var userIdClaim = token.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+        var url = _config.GetValue<string>("ApisUrls:ChaBot");
+        HttpResponseMessage response = await client.GetAsync(url + query);
 
-        if (userIdClaim == null)
+        if (response.IsSuccessStatusCode)
         {
-          return BadRequest("El JWT no tiene un Id de usuario");
+          var content = await response.Content.ReadAsStringAsync();
+          var chat = JsonSerializer.Deserialize<Chat>(content);
+
+          return Ok(Res.Provider(chat, "Datos obtenidos correctamente", true));
         }
-
-        string userId = userIdClaim.Value;
-
-        if (string.IsNullOrEmpty(userId))
+        else
         {
-          return BadRequest("Usuario no válido");
-        }
-
-        // Crear una clave única para rastrear el límite de solicitudes del usuario
-        string cacheKey = "request_limit_" + userId;
-
-        // Verificar si el usuario ha alcanzado el límite
-        if (_cache.TryGetValue(cacheKey, out int requestCount) && requestCount >= 5)
-        {
-          // Aquí, el límite es de 5 solicitudes, pero puedes ajustarlo según tus necesidades.
-          return BadRequest("Has alcanzado el límite de solicitudes permitidas.");
-        }
-
-        // Incrementar el contador de solicitudes y establecerlo en la caché
-        requestCount++;
-        var cacheEntryOptions = new MemoryCacheEntryOptions
-        {
-          AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1) // Establece un tiempo de expiración
-        };
-        _cache.Set(cacheKey, requestCount, cacheEntryOptions);
-
-        try
-        {
-            HttpClient client = _httpClientFactory.CreateClient();
-
-            var url = _config.GetValue<string>("ApisUrls:ChaBot");
-            HttpResponseMessage response = await client.GetAsync(url+query);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                var chat = JsonSerializer.Deserialize<Chat>(content);
-
-                return Ok(Res.Provider(chat, "Datos obtenidos correctamente", true));
-            }
-            else
-            {
-                return BadRequest($"Error en la respuesta: {response}");
-            }
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Error al intentar obtener el chat: {ex.Message}");
+          return BadRequest($"Error en la respuesta: {response}");
         }
       }
       catch (Exception ex)
       {
-        return BadRequest($"Error al procesar el token JWT: {ex.Message}");
+        return BadRequest($"Error al intentar obtener el chat: {ex.Message}");
       }
+
     }
+
+    [HttpGet]
+    [Route("playground")]
+    public async Task<IActionResult> Playground([FromQuery] string query)
+    {
+
+      try
+      {
+        HttpClient client = _httpClientFactory.CreateClient();
+
+        var url = _config.GetValue<string>("ApisUrls:ChaBot");
+        HttpResponseMessage response = await client.GetAsync(url + query);
+
+        if (response.IsSuccessStatusCode)
+        {
+          var content = await response.Content.ReadAsStringAsync();
+          var chat = JsonSerializer.Deserialize<Chat>(content);
+
+          return Ok(Res.Provider(chat, "Datos obtenidos correctamente", true));
+        }
+        else
+        {
+          return BadRequest($"Error en la respuesta: {response}");
+        }
+      }
+      catch (Exception ex)
+      {
+        return BadRequest($"Error al intentar obtener el chat: {ex.Message}");
+      }
+
+    }
+
+    
   }
 }
