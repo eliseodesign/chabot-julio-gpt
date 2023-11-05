@@ -101,6 +101,9 @@ builder.Services.AddSwaggerGen(c =>
 // end swagger
 
 var app = builder.Build();
+// Middlewares
+app.UseMiddleware<RequestLimitUser>();
+
 // app.Listen("http://*:80");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
