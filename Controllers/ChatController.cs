@@ -66,12 +66,12 @@ namespace ESFE.Chatbot.Controllers
         }
         else
         {
-          return BadRequest($"Error en la respuesta: {response}");
+          return BadRequest(Res.Provider(new {}, $"Error en la respuesta: {response}", true));
         }
       }
       catch (Exception ex)
       {
-        return BadRequest($"Error al intentar obtener el chat: {ex.Message}");
+        return BadRequest(Res.Provider(new {}, $"Error al conectar con el chat: {ex.Message}", true));
       }
 
     }
@@ -80,7 +80,6 @@ namespace ESFE.Chatbot.Controllers
     [Route("playground")]
     public async Task<IActionResult> Playground([FromQuery] string query)
     {
-
       try
       {
         HttpClient client = _httpClientFactory.CreateClient();
@@ -97,16 +96,14 @@ namespace ESFE.Chatbot.Controllers
         }
         else
         {
-          return BadRequest($"Error en la respuesta: {response}");
+          return BadRequest(Res.Provider(new {}, $"Error en la respuesta: {response}", true));
         }
       }
       catch (Exception ex)
       {
-        return BadRequest($"Error al intentar obtener el chat: {ex.Message}");
+        return BadRequest(Res.Provider(new {}, $"Error al conectar con el chat: {ex.Message}", true));
       }
 
     }
-
-    
   }
 }

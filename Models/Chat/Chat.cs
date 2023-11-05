@@ -4,7 +4,8 @@ public class Chat
 {
     public List<ChatMetadata>? meta { get; set; }
     public string? question { get; set; }
-    public string? text { get; set; }
+    public string? chat_response { get; set; }
+    public bool? offensive_message  { get; set; }
 }
 
 public class ChatMetadata
