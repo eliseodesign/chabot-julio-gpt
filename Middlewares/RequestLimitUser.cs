@@ -29,7 +29,7 @@ namespace ESFE.Chatbot
         public async Task Invoke(HttpContext context)
         {
             // Verifica si la solicitud está dirigida a un endpoint específico
-            if (context.Request.Path == "/api/chat/test")
+            if (context.Request.Path == "/api/chat/user")
             {
                 // Obtiene el token JWT del encabezado de la solicitud
                 var jwtToken = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
@@ -62,7 +62,7 @@ namespace ESFE.Chatbot
                     }
 
                     // Crear una clave única para rastrear el límite de solicitudes del usuario
-                    string cacheKey = "request_limit_" + userId;
+                    string cacheKey = "req_user_limit_" + userId;
 
                     // Verificar si el usuario ha alcanzado el límite
                     if (_cache.TryGetValue(cacheKey, out int requestCount) && requestCount >= 5)
@@ -76,7 +76,7 @@ namespace ESFE.Chatbot
                     requestCount++;
                     var cacheEntryOptions = new MemoryCacheEntryOptions
                     {
-                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1) // Establece un tiempo de expiración
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1) // Establece un tiempo de expiración
                     };
                     _cache.Set(cacheKey, requestCount, cacheEntryOptions);
 
