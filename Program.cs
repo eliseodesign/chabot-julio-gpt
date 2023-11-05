@@ -103,6 +103,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 // Middlewares
 app.UseMiddleware<RequestLimitUser>();
+app.UseMiddleware<RequestLimitIP>();
 
 // app.Listen("http://*:80");
 // Configure the HTTP request pipeline.
