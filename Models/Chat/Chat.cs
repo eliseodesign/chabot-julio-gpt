@@ -1,15 +1,25 @@
 ﻿
+using System.Text.Json.Serialization;
+
 namespace ESFE.Chatbot.Models.Chat;
 public class Chat
 {
-    public List<ChatMetadata>? meta { get; set; }
-    public string? question { get; set; }
-    public string? chat_response { get; set; }
-    public bool? offensive_message  { get; set; }
+    public string text { get; set; }
+    public List<SourceDocument> sourceDocuments { get; set; }
 }
 
-public class ChatMetadata
+public class SourceDocument
 {
-    public string? document_title { get; set; }
-    public string? file_name { get; set; }
+    public string pageContent { get; set; }
+    public Metadata metadata { get; set; }
+}
+
+public class Metadata
+{
+    [JsonPropertyName("loc.lines.from")]
+    public int loclinesfrom { get; set; }
+
+    [JsonPropertyName("loc.lines.to")]
+    public int loclinesto { get; set; }
+    public string source { get; set; }
 }

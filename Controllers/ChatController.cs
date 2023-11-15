@@ -13,6 +13,7 @@ using System.Text.Json;
 using ESFE.Chatbot.Models.Chat;
 using Microsoft.VisualBasic;
 using dotenv.net;
+using System.Text;
 
 
 namespace ESFE.Chatbot.Controllers
@@ -45,65 +46,50 @@ namespace ESFE.Chatbot.Controllers
       return Ok(Res.Provider(new { }, "Test", true));
     }
     [Authorize]
-    [HttpGet]
+    [HttpPost]
     [Route("user")]
-    public async Task<IActionResult> GetData([FromQuery] string query)
+    public async Task<IActionResult> ChatUser([FromBody] ChatRequest chatRequest)
     {
-
       try
       {
         HttpClient client = _httpClientFactory.CreateClient();
 
         var url = _config.GetValue<string>("ApisUrls:ChaBot");
-        HttpResponseMessage response = await client.GetAsync(url + query);
 
-        if (response.IsSuccessStatusCode)
-        {
+        // Modificamos la petición a POST y enviamos el body
+        HttpResponseMessage response = await client.PostAsJsonAsync(url, chatRequest);
           var content = await response.Content.ReadAsStringAsync();
           var chat = JsonSerializer.Deserialize<Chat>(content);
 
           return Ok(Res.Provider(chat, "Datos obtenidos correctamente", true));
-        }
-        else
-        {
-          return BadRequest(Res.Provider(new {}, $"Error en la respuesta: {response}", true));
-        }
       }
       catch (Exception ex)
       {
-        return BadRequest(Res.Provider(new {}, $"Error al conectar con el chat: {ex.Message}", true));
+        return BadRequest(Res.Provider(new { }, $"Error al conectar con el chat: {ex.Message}", true));
       }
-
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("playground")]
-    public async Task<IActionResult> Playground([FromQuery] string query)
+    public async Task<IActionResult> ChatPlayground([FromBody] ChatRequest chatRequest)
     {
       try
       {
         HttpClient client = _httpClientFactory.CreateClient();
 
         var url = _config.GetValue<string>("ApisUrls:ChaBot");
-        HttpResponseMessage response = await client.GetAsync(url + query);
 
-        if (response.IsSuccessStatusCode)
-        {
+        // Modificamos la petición a POST y enviamos el body
+        HttpResponseMessage response = await client.PostAsJsonAsync(url, chatRequest);
           var content = await response.Content.ReadAsStringAsync();
           var chat = JsonSerializer.Deserialize<Chat>(content);
 
           return Ok(Res.Provider(chat, "Datos obtenidos correctamente", true));
-        }
-        else
-        {
-          return BadRequest(Res.Provider(new {}, $"Error en la respuesta: {response}", true));
-        }
       }
       catch (Exception ex)
       {
-        return BadRequest(Res.Provider(new {}, $"Error al conectar con el chat: {ex.Message}", true));
+        return BadRequest(Res.Provider(new { }, $"Error al conectar con el chat: {ex.Message}", true));
       }
-
     }
   }
 }
