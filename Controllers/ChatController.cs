@@ -39,11 +39,11 @@ namespace ESFE.Chatbot.Controllers
       _config = config;
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("test")]
     public async Task<IActionResult> Test()
     {
-      return Ok(Res.Provider(new { }, "Test", true));
+      return Ok(Res.Provider(new Chat(){sourceDocuments=null, text="test"}, "Test", true));
     }
     [Authorize]
     [HttpPost]

@@ -105,7 +105,10 @@ namespace ESFE.Chatbot
             Console.WriteLine("BadRequest MIDDLEWARE");
             context.Response.StatusCode = 400; // Código de respuesta prohibido (puedes usar otro código según tus necesidades)
             context.Response.ContentType = "application/json";
+            
             context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "*");
             var data = Res.Provider(new { }, error, false);
             await context.Response.WriteAsJsonAsync(data);
             return;

@@ -20,7 +20,7 @@ namespace ESFE.Chatbot
         public async Task Invoke(HttpContext context)
         {
             // Verifica si la solicitud está dirigida a un endpoint específico
-            if (context.Request.Path == "/api/chat/playground")
+            if (context.Request.Path == "/api/chat/test")
             {
                 // Obtiene la dirección IP del cliente
                 string clientIP = context.Connection.RemoteIpAddress.ToString();
@@ -30,7 +30,7 @@ namespace ESFE.Chatbot
                 string cacheKey = "req_playground_limit_" + clientIP;
 
                 // Verificar si la IP ha alcanzado el límite
-                if (_cache.TryGetValue(cacheKey, out int requestCount) && requestCount >= 3)
+                if (_cache.TryGetValue(cacheKey, out int requestCount) && requestCount >= 5)
                 {
                     // Aquí, el límite es de 5 solicitudes, pero puedes ajustarlo según tus necesidades.
                     await BadRequest(context, "Esta IP ha alcanzado el límite de solicitudes permitidas.");
@@ -65,7 +65,11 @@ namespace ESFE.Chatbot
             Console.WriteLine("BadRequest MIDDLEWARE");
             context.Response.StatusCode = 400; // Código de respuesta prohibido (puedes usar otro código según tus necesidades)
             context.Response.ContentType = "application/json";
+            
             context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "*");
+
             var data = Res.Provider(new { }, error, false);
             await context.Response.WriteAsJsonAsync(data);
             return;
