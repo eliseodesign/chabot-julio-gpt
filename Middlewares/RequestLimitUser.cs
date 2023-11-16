@@ -36,7 +36,7 @@ namespace ESFE.Chatbot
 
                 if (string.IsNullOrEmpty(jwtToken))
                 {
-                    await BadRequest(context, "Token JWT no válido");
+                    await UtilsService.BadRequest(context, "Token JWT no válido");
                     return;
                 }
 
@@ -50,7 +50,7 @@ namespace ESFE.Chatbot
 
                     if (userIdClaim == null)
                     {
-                        await BadRequest(context, "El JWT no tiene un Id de usuario");
+                        await UtilsService.BadRequest(context, "El JWT no tiene un Id de usuario");
                         return;
                     }
 
@@ -58,7 +58,7 @@ namespace ESFE.Chatbot
 
                     if (string.IsNullOrEmpty(userId))
                     {
-                        await BadRequest(context, "Usuario no válido");
+                        await UtilsService.BadRequest(context, "Usuario no válido");
                     }
 
                     // Crear una clave única para rastrear el límite de solicitudes del usuario
@@ -68,7 +68,7 @@ namespace ESFE.Chatbot
                     if (_cache.TryGetValue(cacheKey, out int requestCount) && requestCount >= 5)
                     {
                         // Aquí, el límite es de 5 solicitudes, pero puedes ajustarlo según tus necesidades.
-                        await BadRequest(context, "Has alcanzado el límite de solicitudes permitidas.");
+                        await UtilsService.BadRequest(context, "Has alcanzado el límite de solicitudes permitidas.");
                         return;
                     }
 
@@ -87,33 +87,18 @@ namespace ESFE.Chatbot
                     }
                     catch (Exception ex)
                     {
-                        await BadRequest(context, $"Error al intentar obtener el chat: {ex.Message}");
+                        await UtilsService.BadRequest(context, $"Error al intentar obtener el chat: {ex.Message}");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
-                    await BadRequest(context, $"Error al procesar el token JWT: {ex.Message}");
+                    await UtilsService.BadRequest(context, $"Error al procesar el token JWT: {ex.Message}");
                     return;
                 }
             }
             await _next(context);
 
         }
-        private async Task BadRequest(HttpContext context, string error)
-        {
-            Console.WriteLine("BadRequest MIDDLEWARE");
-            context.Response.StatusCode = 400; // Código de respuesta prohibido (puedes usar otro código según tus necesidades)
-            context.Response.ContentType = "application/json";
-            
-            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
-            context.Response.Headers.Add("Access-Control-Allow-Methods", "*");
-            var data = Res.Provider(new { }, error, false);
-            await context.Response.WriteAsJsonAsync(data);
-            return;
-        }
-
     }
-
 }
