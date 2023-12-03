@@ -20,7 +20,7 @@ namespace ESFE.Chatbot
         public async Task Invoke(HttpContext context)
         {
             // Verifica si la solicitud está dirigida a un endpoint específico
-            if (context.Request.Path == "/api/chat/playground" || context.Request.Path == "/api/chat/test")
+            if (context.Request.Path == "/api/chat/none" || context.Request.Path == "/api/chat/test")
             {
                 // Obtiene la dirección IP del cliente
                 string clientIP = context.Connection.RemoteIpAddress.ToString();
