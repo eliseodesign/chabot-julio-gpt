@@ -29,7 +29,7 @@ namespace ESFE.Chatbot
         public async Task Invoke(HttpContext context)
         {
             // Verifica si la solicitud está dirigida a un endpoint específico
-            if (context.Request.Path == "/api/chat/user")
+            if (context.Request.Path == "/api/chat/none")
             {
                 // Obtiene el token JWT del encabezado de la solicitud
                 var jwtToken = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
