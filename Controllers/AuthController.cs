@@ -46,7 +46,7 @@ public class AuthController : ControllerBase
   }
 
   // [Authorize]
-  [HttpPost]
+  [HttpGet]
   [Route("ping")]
   public async Task<IActionResult> Ping()
   {
